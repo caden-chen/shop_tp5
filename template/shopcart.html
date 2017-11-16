@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>购物车页面</title>
+
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css"/>
+    <link href="/index/static/basic/css/demo.css" rel="stylesheet" type="text/css"/>
+    <link href="/index/static/css/cartstyle.css" rel="stylesheet" type="text/css"/>
+    <link href="/index/static/css/optstyle.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="/index/static/js/jquery.js"></script>
+</head>
+
+<body>
+
+{include file="../template/common/header.html"}
+<!--购物车 -->
+<div class="concent">
+    {if condition="session('cart.goods')"}
+    <div id="cartTable">
+        <div class="cart-table-th">
+            <div class="wp">
+                <div class="th th-chk">
+                    <div id="J_SelectAll1" class="select-all J_SelectAll">
+
+                    </div>
+                </div>
+                <div class="th th-item">
+                    <div class="td-inner">商品信息</div>
+                </div>
+                <div class="th th-price">
+                    <div class="td-inner">单价</div>
+                </div>
+                <div class="th th-amount">
+                    <div class="td-inner">数量</div>
+                </div>
+                <div class="th th-sum">
+                    <div class="td-inner">金额</div>
+                </div>
+                <div class="th th-op">
+                    <div class="td-inner">操作</div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+
+        <tr class="item-list">
+            <div class="bundle  bundle-last ">
+                <div class="bundle-hd">
+                    <div class="bd-promos">
+                        <div class="bd-has-promo">商品结算<span class="bd-has-promo-content"></span>&nbsp;&nbsp;
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="bundle-main">
+                    {foreach name="cartData['goods']" item="vo" key="k"}
+                    <ul class="item-content clearfix">
+                        <li class="td td-item">
+                            <div class="item-pic">
+                                <a href="{:url('index/goods/index',['gid'=>$vo['id']])}" target="_blank" data-title="{$vo['name']}"
+                                   class="J_MakePoint" data-point="tbcart.8.12">
+                                    <img style="width:100%" src="{$vo['options']['img']}" class="itempic J_ItemImg"></a>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-basic-info">
+                                    <a href="{:url('index/goods/index',['gid'=>$vo['id']])}" target="_blank" title="{$vo['name']}"
+                                       class="item-title J_MakePoint" data-point="tbcart.8.11">{$vo['name']}</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-info">
+                            <div class="item-props item-props-can">
+                                <span class="sku-line">规格：{$vo['options']['spec']}</span>
+                                <i class="theme-login am-icon-sort-desc"></i>
+                            </div>
+                        </li>
+                        <li class="td td-price">
+                            <div class="item-price price-promo-promo">
+                                <div class="price-content">
+                                    <div class="price-line">
+                                        <em class="J_Price price-now" tabindex="0">{$vo['price']}</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-amount">
+                            <div class="amount-wrapper ">
+                                <div class="item-amount ">
+                                    <div class="sl">
+                                        <input class="min am-btn" name="" type="button" sid="{$k}" value="-"/>
+                                        <input class="text_box" name="" readonly type="text" value="{$vo['num']}"
+                                               style="width:30px;border: none;text-align: center"/>
+                                        <input class="add am-btn" name="" type="button" sid="{$k}" value="+"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="td td-sum">
+                            <div class="td-inner">
+                                <em tabindex="0" class="J_ItemSum number">{$vo['total']}</em>
+                            </div>
+                        </li>
+                        <li class="td td-op">
+                            <div class="td-inner">
+                                <a href="javascript:;" data-point-url="#" sid="{$k}" class="delete">删除</a>
+                            </div>
+                        </li>
+
+                    </ul>
+                    {/foreach}
+                </div>
+
+                <script>
+                    $('.delete').click(function () {
+                        var Index = $(this).parents('ul.clearfix');
+                        $.post("{:url('index/cart/del')}", {sid: $(this).attr('sid'), num: 0}, function (res) {
+                            layer.confirm('确认删除吗？', {
+                                btn: ['确认', '取消'] //按钮
+                            }, function () {
+                                if (res['code'] == 1) {
+                                    layer.msg(res['msg'], {
+                                        icon: 1,
+                                        time: 1000,
+                                    });
+                                    setTimeout(function () {
+                                        $('.price-sum #J_Total').text(res.data.total_price);
+                                        $('#J_SelectedItemsCount').text(res.data.total_rows);
+                                        Index.remove();
+                                    }, 1000)
+                                }
+                            });
+                        })
+                    })
+                </script>
+            </div>
+        </tr>
+        <script>
+            $('.min').click(function () {
+                var obj=$(this);
+                //小计
+                //var price = $(this).parents('.td-amount').siblings('.td-price').find('.J_Price').text();
+                var num = $(this).siblings('.text_box').val();
+                num--;
+                if (num <= 1) {
+                    num = 1
+                    $(this).siblings('.text_box').val(2);
+                    $(this).attr('disabled', true);
+                }
+                //var xiaoji = parseFloat(price * num);
+                //$(this).parents('.td-amount').siblings('.td-sum').find('.td-inner .number').text(xiaoji)
+                //异步
+                var sid=$(this).attr('sid');
+                $.post("{:url('index/cart/UpdateCart')}", {sid:sid, num: num}, function (response) {
+                    //console.log(response)
+                    $(obj).parents('.td-amount').siblings('.td-sum').find('.td-inner .number').text(response.goods[sid].total)
+                    $('.price-sum #J_Total').text(response.total_price);
+                    $('#J_SelectedItemsCount').text(response.total_rows);
+                })
+
+                //                //总价
+//                var total = 0;
+//                $('.J_ItemSum').each(function () {
+//                    total += parseInt($(this).text())
+//                })
+//                $('.price-sum #J_Total').text(total);
+//
+//                //总数量
+//                var jian = 0;
+//                $('.text_box').each(function () {
+//                    jian += parseInt($(this).val())
+//                })
+//                $('#J_SelectedItemsCount').text(jian - 1);
+            })
+
+
+            $('.add').click(function () {
+                var obj=$(this);
+                //小计
+                //var price = $(this).parents('.td-amount').siblings('.td-price').find('.J_Price').text();
+                var num = $(this).siblings('.text_box').val();
+                num++;
+                if (num > 1) {
+                    $(this).siblings('.min').attr('disabled', false);
+                }
+                //                var xiaoji = parseFloat(price * num);
+//                $(this).parents('.td-amount').siblings('.td-sum').find('.td-inner .number').text(xiaoji)
+                var sid=$(this).attr('sid');
+                //异步
+                $.post("{:url('index/cart/UpdateCart')}", {sid: $(this).attr('sid'), num: num}, function (response) {
+                    $(obj).parents('.td-amount').siblings('.td-sum').find('.td-inner .number').text(response.goods[sid].total)
+                    $('.price-sum #J_Total').text(response.total_price);
+                    $('#J_SelectedItemsCount').text(response.total_rows);
+                })
+
+                    //                //总价
+//                var total = 0;
+//                $('.J_ItemSum').each(function () {
+//                    total += parseInt($(this).text())
+//                })
+//                $('.price-sum #J_Total').text(total);
+//
+//                //总数量
+//                var jian = 0;
+//                $('.text_box').each(function () {
+//                    jian += parseInt($(this).val())
+//                })
+//                $('#J_SelectedItemsCount').text(jian + 1);
+            })
+        </script>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <div class="float-bar-wrapper ">
+        <div class="operations">
+            <a href="#" hidefocus="true" class="deleteAll">清空购物车</a>
+        </div>
+        <script>
+
+            $('.deleteAll').click(function (res) {
+                //var Index = $(this).parents('.float-bar-wrapper').siblings('.cartTable ul.clearfix');
+
+                $.post("{:url('index/cart/deleteAll')}", function (res) {
+                    layer.confirm('确认清空吗？', {
+                        btn: ['确认', '取消'] //按钮
+                    }, function () {
+                        if (res['code'] == 1) {
+                            layer.msg(res.msg, {
+                                icon: 1,
+                                time: 1000,
+                            });
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000)
+                        }
+                    });
+                })
+
+            })
+        </script>
+        <div class="float-bar-right">
+            <div class="amount-sum">
+                <span class="txt">已选商品</span>
+                <em id="J_SelectedItemsCount">{$cartData['total_rows']}</em><span class="txt">件</span>
+                <div class="arrow-box">
+                    <span class="selected-items-arrow"></span>
+                    <span class="arrow"></span>
+                </div>
+            </div>
+            <div class="price-sum">
+                <span class="txt">合计:</span>
+                <strong class="price">¥<em id="J_Total">{$cartData['total_price']}</em></strong>
+            </div>
+            <div class="btn-area" style="cursor: pointer">
+                <a href="javascript:;" id="J_Go" class="submit-btn submit-btn-disabled"
+                   aria-label="请注意如果没有选择宝贝，将无法结算">
+                    <span>结&nbsp;算</span></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.btn-area').click(function () {
+            $.post("{:url('index/cart/auth')}", function (res) {
+                if (res['code'] == 0) {
+                    layer.msg(res.msg, {icon: 5}, function () {
+                        location.href = "{:url('index/login/index')}";
+                    });
+                } else {
+                    location.href = "{:url('index/pay/index')}";
+                }
+            }, 'json');
+        })
+    </script>
+    {else /}
+    <style>
+        .empty {
+            padding-top: 80px;
+            width: 100%;
+            height: 300px;
+            margin-top: 50px;
+            background: #EEEEEE;
+            box-shadow: 10px -10px 10px #eeeeee;
+            text-align: center;
+
+        }
+
+        .empty h1 {
+            font-size: 40px;
+        }
+
+        .empty a {
+            width: 200px;
+            display: block;
+            font-family: '宋体';
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            color: #FFFFFF;
+            background: #ac2925;
+            font-size: 20px;
+            margin: 50px auto 0;
+
+        }
+
+        .empty a:hover {
+            font-family: '宋体';
+            color: #FFFFFF;
+            background: red;
+        }
+    </style>
+    <div class="empty">
+        <h1>购物车空空如也o(╥﹏╥)o</h1>
+        <a href="{:url('index/index/index')}">快去选购吧</a>
+    </div>
+    {/if}
+    {include file="../template/common/footer.html"}
+</div>
+
+</body>
+
+</html>

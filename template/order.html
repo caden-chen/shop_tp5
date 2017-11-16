@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+
+    <title>订单管理</title>
+
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css">
+
+    <link href="/index/static/css/personal.css" rel="stylesheet" type="text/css">
+    <link href="/index/static/css/orstyle.css" rel="stylesheet" type="text/css">
+
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/jquery.min.js"></script>
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/amazeui.js"></script>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/layui/layui.all.js"></script>
+</head>
+
+<body>
+<!--头 -->
+<header>
+    {include file="../template/common/header.html"}
+</header>
+<div class="nav-table">
+    <div class="long-title"><span class="all-goods">全部分类</span></div>
+    <div class="nav-cont">
+        <ul>
+            <li class="index"><a href="{:url('index/index/index')}">首页</a></li>
+        </ul>
+    </div>
+</div>
+<b class="line"></b>
+<div class="center">
+    <div class="col-main">
+        <div class="main-wrap">
+
+            <div class="user-order">
+
+                <!--标题 -->
+                <div class="am-cf am-padding">
+                    <div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">订单管理</strong> /
+                        <small>Order</small>
+                    </div>
+                </div>
+                <hr/>
+
+                <div class="am-tabs am-tabs-d2 am-margin" data-am-tabs>
+
+                    <ul class="am-avg-sm-5 am-tabs-nav am-nav am-nav-tabs">
+                        <li class="am-active"><a href="#tab1">所有订单</a></li>
+                        <li><a href="#tab2">待付款</a></li>
+                        <li><a href="#tab3">待发货</a></li>
+                        <li><a href="#tab4">待收货</a></li>
+                        <li><a href="#tab5">交易完成</a></li>
+                    </ul>
+
+                    <div class="am-tabs-bd">
+                        <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                            <div class="order-top">
+                                <div class="th th-item">
+                                    <td class="td-inner">商品</td>
+                                </div>
+                                <div class="th th-price">
+                                    <td class="td-inner">单价</td>
+                                </div>
+                                <div class="th th-number">
+                                    <td class="td-inner">数量</td>
+                                </div>
+                                <div class="th th-operation">
+                                    <td class="td-inner">商品操作</td>
+                                </div>
+                                <div class="th th-amount">
+                                    <td class="td-inner">合计</td>
+                                </div>
+                                <div class="th th-status">
+                                    <td class="td-inner">交易状态</td>
+                                </div>
+                                <div class="th th-change">
+                                    <td class="td-inner">交易操作</td>
+                                </div>
+                            </div>
+
+                            <div class="order-main">
+                                <div class="order-list">
+
+                                    <!--全部订单-->
+                                    {foreach name="orderData" item="v" key="k"}
+                                    <div class="order-status1">
+                                        <div class="order-title">
+                                            <div class="dd-num">订单编号：<a href="javascript:;">{$v['oname']}</a></div>
+                                            <span>成交时间：{:date('Y-m-d',$v['time'])}</span>
+                                            <!--    <em>店铺：小桔灯</em>-->
+                                        </div>
+                                        <div class="order-content">
+                                            <div class="order-left">
+                                                {foreach name="$v['ogoods']['goods']" item="vv"}
+                                                <ul class="item-list">
+                                                    <li class="td td-item">
+                                                        <div class="item-pic">
+                                                            <a href="#" class="J_MakePoint">
+                                                                <img src="{$vv['options']['img']}"
+                                                                     class="itempic J_ItemImg">
+                                                            </a>
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <div class="item-basic-info">
+                                                                <a href="#">
+                                                                    <p>{$vv['name']}</p>
+                                                                    <p class="info-little">规格：{$vv['options']['spec']}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-price">
+                                                        <div class="item-price">
+                                                            {$vv['price']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-number">
+                                                        <div class="item-number">
+                                                            <span>×</span>{$vv['num']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-operation">
+                                                        <div class="item-operation">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {/foreach}
+                                            </div>
+                                            <div class="order-right">
+                                                <li class="td td-amount">
+                                                    <div class="item-amount">
+                                                        合计：{$v['ogoods']['total_price']}
+                                                    </div>
+                                                </li>
+                                                <div class="move-right">
+                                                    <li class="td td-status">
+                                                        <div class="item-status">
+                                                            <p class="Mystatus">
+                                                                {switch name="$v['state']" }
+                                                                {case value="0" break="1"}待付款{/case}
+                                                                {case value="1" break="1"}待发货{/case}
+                                                                {case value="2" break="1"}待收货{/case}
+                                                                {case value="3" break="1"}交易完成{/case}
+                                                                {case value="4" break="1"}交易取消{/case}
+                                                                {case value="5" break="1"}等待审核{/case}
+                                                                {/switch}
+                                                            </p>
+                                                            <p class="order-info"><a
+                                                                    href="{:url('index/orders/index',['oid'=>$v['oid']])}">订单详情</a>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-change">
+                                                        {switch name="$v['state']" }
+                                                        {case value="0" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="pay(this,{$v['oid']})">
+                                                            立即付款
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="1|2" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="confirm(this,{$v['oid']})">
+                                                            确认收货
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="3|4" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="del(this,{$v['oid']})">
+                                                            删除订单
+                                                        </div>
+
+                                                        {/case}
+                                                        {case value="5" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu">
+                                                            等待审核
+                                                        </div>
+                                                        {/case}
+                                                        {/switch}
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                        <div class="am-tab-panel am-fade am-in " id="tab2">
+                            <div class="order-top">
+                                <div class="th th-item">
+                                    <td class="td-inner">商品</td>
+                                </div>
+                                <div class="th th-price">
+                                    <td class="td-inner">单价</td>
+                                </div>
+                                <div class="th th-number">
+                                    <td class="td-inner">数量</td>
+                                </div>
+                                <div class="th th-operation">
+                                    <td class="td-inner">商品操作</td>
+                                </div>
+                                <div class="th th-amount">
+                                    <td class="td-inner">合计</td>
+                                </div>
+                                <div class="th th-status">
+                                    <td class="td-inner">交易状态</td>
+                                </div>
+                                <div class="th th-change">
+                                    <td class="td-inner">交易操作</td>
+                                </div>
+                            </div>
+
+                            <div class="order-main">
+                                <div class="order-list">
+
+                                    <!--待发货-->
+                                    {foreach name="orderData2" item="v" key="k"}
+                                    <div class="order-status1">
+                                        <div class="order-title">
+                                            <div class="dd-num">订单编号：<a href="javascript:;">{$v['oname']}</a></div>
+                                            <span>成交时间：{:date('Y-m-d',$v['time'])}</span>
+                                            <!--    <em>店铺：小桔灯</em>-->
+                                        </div>
+                                        <div class="order-content">
+                                            <div class="order-left">
+                                                {foreach name="$v['ogoods']['goods']" item="vv"}
+                                                <ul class="item-list">
+                                                    <li class="td td-item">
+                                                        <div class="item-pic">
+                                                            <a href="#" class="J_MakePoint">
+                                                                <img src="{$vv['options']['img']}"
+                                                                     class="itempic J_ItemImg">
+                                                            </a>
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <div class="item-basic-info">
+                                                                <a href="#">
+                                                                    <p>{$vv['name']}</p>
+                                                                    <p class="info-little">规格：{$vv['options']['spec']}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-price">
+                                                        <div class="item-price">
+                                                            {$vv['price']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-number">
+                                                        <div class="item-number">
+                                                            <span>×</span>{$vv['num']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-operation">
+                                                        <div class="item-operation">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {/foreach}
+                                            </div>
+                                            <div class="order-right">
+                                                <li class="td td-amount">
+                                                    <div class="item-amount">
+                                                        合计：{$v['ogoods']['total_price']}
+                                                    </div>
+                                                </li>
+                                                <div class="move-right">
+                                                    <li class="td td-status">
+                                                        <div class="item-status">
+                                                            <p class="Mystatus">
+                                                                {switch name="$v['state']" }
+                                                                {case value="0" break="1"}待付款{/case}
+                                                                {case value="1" break="1"}待发货{/case}
+                                                                {case value="2" break="1"}待收货{/case}
+                                                                {case value="3" break="1"}交易完成{/case}
+                                                                {case value="4" break="1"}交易取消{/case}
+                                                                {case value="5" break="1"}等待审核{/case}
+                                                                {/switch}
+                                                            </p>
+                                                            <p class="order-info"><a
+                                                                    href="{:url('index/orders/index',['oid'=>$v['oid']])}">订单详情</a>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-change">
+                                                        {switch name="$v['state']" }
+                                                        {case value="0" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="pay(this,{$v['oid']})">
+                                                            立即付款
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="1|2" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="confirm(this,{$v['oid']})">
+                                                            确认收货
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="3|4" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="del(this,{$v['oid']})">
+                                                            删除订单
+                                                        </div>
+
+                                                        {/case}
+                                                        {case value="5" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu">
+                                                            等待审核
+                                                        </div>
+                                                        {/case}
+                                                        {/switch}
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="am-tab-panel am-fade am-in " id="tab3">
+                            <div class="order-top">
+                                <div class="th th-item">
+                                    <td class="td-inner">商品</td>
+                                </div>
+                                <div class="th th-price">
+                                    <td class="td-inner">单价</td>
+                                </div>
+                                <div class="th th-number">
+                                    <td class="td-inner">数量</td>
+                                </div>
+                                <div class="th th-operation">
+                                    <td class="td-inner">商品操作</td>
+                                </div>
+                                <div class="th th-amount">
+                                    <td class="td-inner">合计</td>
+                                </div>
+                                <div class="th th-status">
+                                    <td class="td-inner">交易状态</td>
+                                </div>
+                                <div class="th th-change">
+                                    <td class="td-inner">交易操作</td>
+                                </div>
+                            </div>
+
+                            <div class="order-main">
+                                <div class="order-list">
+
+                                    <!--待发货-->
+                                    {foreach name="orderData3" item="v" key="k"}
+                                    <div class="order-status1">
+                                        <div class="order-title">
+                                            <div class="dd-num">订单编号：<a href="javascript:;">{$v['oname']}</a></div>
+                                            <span>成交时间：{:date('Y-m-d',$v['time'])}</span>
+                                            <!--    <em>店铺：小桔灯</em>-->
+                                        </div>
+                                        <div class="order-content">
+                                            <div class="order-left">
+                                                {foreach name="$v['ogoods']['goods']" item="vv"}
+                                                <ul class="item-list">
+                                                    <li class="td td-item">
+                                                        <div class="item-pic">
+                                                            <a href="#" class="J_MakePoint">
+                                                                <img src="{$vv['options']['img']}"
+                                                                     class="itempic J_ItemImg">
+                                                            </a>
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <div class="item-basic-info">
+                                                                <a href="#">
+                                                                    <p>{$vv['name']}</p>
+                                                                    <p class="info-little">规格：{$vv['options']['spec']}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-price">
+                                                        <div class="item-price">
+                                                            {$vv['price']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-number">
+                                                        <div class="item-number">
+                                                            <span>×</span>{$vv['num']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-operation">
+                                                        <div class="item-operation">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {/foreach}
+                                            </div>
+                                            <div class="order-right">
+                                                <li class="td td-amount">
+                                                    <div class="item-amount">
+                                                        合计：{$v['ogoods']['total_price']}
+                                                    </div>
+                                                </li>
+                                                <div class="move-right">
+                                                    <li class="td td-status">
+                                                        <div class="item-status">
+                                                            <p class="Mystatus">
+                                                                {switch name="$v['state']" }
+                                                                {case value="0" break="1"}待付款{/case}
+                                                                {case value="1" break="1"}待发货{/case}
+                                                                {case value="2" break="1"}待收货{/case}
+                                                                {case value="3" break="1"}交易完成{/case}
+                                                                {case value="4" break="1"}交易取消{/case}
+                                                                {case value="5" break="1"}等待审核{/case}
+                                                                {/switch}
+                                                            </p>
+                                                            <p class="order-info"><a
+                                                                    href="{:url('index/orders/index',['oid'=>$v['oid']])}">订单详情</a>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-change">
+                                                        {switch name="$v['state']" }
+                                                        {case value="0" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="pay(this,{$v['oid']})">
+                                                            立即付款
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="1|2" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="confirm(this,{$v['oid']})">
+                                                            确认收货
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="3|4" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="del(this,{$v['oid']})">
+                                                            删除订单
+                                                        </div>
+
+                                                        {/case}
+                                                        {case value="5" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu">
+                                                            等待审核
+                                                        </div>
+                                                        {/case}
+                                                        {/switch}
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="am-tab-panel am-fade am-in " id="tab4">
+                            <div class="order-top">
+                                <div class="th th-item">
+                                    <td class="td-inner">商品</td>
+                                </div>
+                                <div class="th th-price">
+                                    <td class="td-inner">单价</td>
+                                </div>
+                                <div class="th th-number">
+                                    <td class="td-inner">数量</td>
+                                </div>
+                                <div class="th th-operation">
+                                    <td class="td-inner">商品操作</td>
+                                </div>
+                                <div class="th th-amount">
+                                    <td class="td-inner">合计</td>
+                                </div>
+                                <div class="th th-status">
+                                    <td class="td-inner">交易状态</td>
+                                </div>
+                                <div class="th th-change">
+                                    <td class="td-inner">交易操作</td>
+                                </div>
+                            </div>
+
+                            <div class="order-main">
+                                <div class="order-list">
+
+                                    <!--待收货-->
+                                    {foreach name="orderData4" item="v" key="k"}
+                                    <div class="order-status1">
+                                        <div class="order-title">
+                                            <div class="dd-num">订单编号：<a href="javascript:;">{$v['oname']}</a></div>
+                                            <span>成交时间：{:date('Y-m-d',$v['time'])}</span>
+                                            <!--    <em>店铺：小桔灯</em>-->
+                                        </div>
+                                        <div class="order-content">
+                                            <div class="order-left">
+                                                {foreach name="$v['ogoods']['goods']" item="vv"}
+                                                <ul class="item-list">
+                                                    <li class="td td-item">
+                                                        <div class="item-pic">
+                                                            <a href="#" class="J_MakePoint">
+                                                                <img src="{$vv['options']['img']}"
+                                                                     class="itempic J_ItemImg">
+                                                            </a>
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <div class="item-basic-info">
+                                                                <a href="#">
+                                                                    <p>{$vv['name']}</p>
+                                                                    <p class="info-little">规格：{$vv['options']['spec']}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-price">
+                                                        <div class="item-price">
+                                                            {$vv['price']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-number">
+                                                        <div class="item-number">
+                                                            <span>×</span>{$vv['num']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-operation">
+                                                        <div class="item-operation">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {/foreach}
+                                            </div>
+                                            <div class="order-right">
+                                                <li class="td td-amount">
+                                                    <div class="item-amount">
+                                                        合计：{$v['ogoods']['total_price']}
+                                                    </div>
+                                                </li>
+                                                <div class="move-right">
+                                                    <li class="td td-status">
+                                                        <div class="item-status">
+                                                            <p class="Mystatus">
+                                                                {switch name="$v['state']" }
+                                                                {case value="0" break="1"}待付款{/case}
+                                                                {case value="1" break="1"}待发货{/case}
+                                                                {case value="2" break="1"}待收货{/case}
+                                                                {case value="3" break="1"}交易完成{/case}
+                                                                {case value="4" break="1"}交易取消{/case}
+                                                                {case value="5" break="1"}等待审核{/case}
+                                                                {/switch}
+                                                            </p>
+                                                            <p class="order-info"><a
+                                                                    href="{:url('index/orders/index',['oid'=>$v['oid']])}">订单详情</a>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-change">
+                                                        {switch name="$v['state']" }
+                                                        {case value="0" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="pay(this,{$v['oid']})">
+                                                            立即付款
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="1|2" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="confirm(this,{$v['oid']})">
+                                                            确认收货
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="3|4" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="del(this,{$v['oid']})">
+                                                            删除订单
+                                                        </div>
+
+                                                        {/case}
+                                                        {case value="5" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu">
+                                                            等待审核
+                                                        </div>
+                                                        {/case}
+                                                        {/switch}
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="am-tab-panel am-fade am-in " id="tab5">
+                            <div class="order-top">
+                                <div class="th th-item">
+                                    <td class="td-inner">商品</td>
+                                </div>
+                                <div class="th th-price">
+                                    <td class="td-inner">单价</td>
+                                </div>
+                                <div class="th th-number">
+                                    <td class="td-inner">数量</td>
+                                </div>
+                                <div class="th th-operation">
+                                    <td class="td-inner">商品操作</td>
+                                </div>
+                                <div class="th th-amount">
+                                    <td class="td-inner">合计</td>
+                                </div>
+                                <div class="th th-status">
+                                    <td class="td-inner">交易状态</td>
+                                </div>
+                                <div class="th th-change">
+                                    <td class="td-inner">交易操作</td>
+                                </div>
+                            </div>
+
+                            <div class="order-main">
+                                <div class="order-list">
+                                    <!--交易完成-->
+                                    {foreach name="orderData5" item="v"}
+                                    <div class="order-status1">
+                                        <div class="order-title">
+                                            <div class="dd-num">订单编号：<a href="javascript:;">{$v['oname']}</a></div>
+                                            <span>成交时间：{:date('Y-m-d',$v['time'])}</span>
+                                            <!--    <em>店铺：小桔灯</em>-->
+                                        </div>
+                                        <div class="order-content">
+                                            <div class="order-left">
+                                                {foreach name="$v['ogoods']['goods']" item="vv"}
+                                                <ul class="item-list">
+                                                    <li class="td td-item">
+                                                        <div class="item-pic">
+                                                            <a href="#" class="J_MakePoint">
+                                                                <img src="{$vv['options']['img']}"
+                                                                     class="itempic J_ItemImg">
+                                                            </a>
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <div class="item-basic-info">
+                                                                <a href="#">
+                                                                    <p>{$vv['name']}</p>
+                                                                    <p class="info-little">规格：{$vv['options']['spec']}
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-price">
+                                                        <div class="item-price">
+                                                            {$vv['price']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-number">
+                                                        <div class="item-number">
+                                                            <span>×</span>{$vv['num']}
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-operation">
+                                                        <div class="item-operation">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {/foreach}
+                                            </div>
+                                            <div class="order-right">
+                                                <li class="td td-amount">
+                                                    <div class="item-amount">
+                                                        合计：{$v['ogoods']['total_price']}
+                                                    </div>
+                                                </li>
+                                                <div class="move-right">
+                                                    <li class="td td-status">
+                                                        <div class="item-status">
+                                                            <p class="Mystatus">
+                                                                {switch name="$v['state']" }
+                                                                {case value="0" break="1"}待付款{/case}
+                                                                {case value="1" break="1"}待发货{/case}
+                                                                {case value="2" break="1"}待收货{/case}
+                                                                {case value="3" break="1"}交易完成{/case}
+                                                                {case value="4" break="1"}交易取消{/case}
+                                                                {case value="5" break="1"}等待审核{/case}
+                                                                {/switch}
+                                                            </p>
+                                                            <p class="order-info"><a
+                                                                    href="{:url('index/orders/index',['oid'=>$v['oid']])}">订单详情</a>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="td td-change">
+                                                        {switch name="$v['state']" }
+                                                        {case value="0" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="pay(this,{$v['oid']})">
+                                                            立即付款
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="1|2" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="confirm(this,{$v['oid']})">
+                                                            确认收货
+                                                        </div>
+                                                        <div style="margin-top: 5px;width: 80px;float: right;color: #e0e0e0;cursor: pointer;text-decoration: underline" onclick="cancel(this,{$v['oid']})">
+                                                            取消订单
+                                                        </div>
+                                                        {/case}
+                                                        {case value="3|4" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu"
+                                                             onclick="del(this,{$v['oid']})">
+                                                            删除订单
+                                                        </div>
+
+                                                        {/case}
+                                                        {case value="5" break="1"}
+                                                        <div class="am-btn am-btn-danger anniu">
+                                                            等待审核
+                                                        </div>
+                                                        {/case}
+                                                        {/switch}
+                                                    </li>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <script>
+            function cancel(obj, oid) {
+                $.post("{:url('index/orderlist/cancel')}", {oid}, function (res) {
+                    layer.msg('你确定取消订单吗？', {
+                        time: 0 //不自动关闭
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            layer.close(index);
+                            $(obj).parents('li.td-change').siblings('li.td-status').find('.Mystatus').text(res.msg);
+                            $(obj).siblings('.anniu').text(res.operation);
+                        }
+                    });
+                })
+            }
+
+            function pay(obj, oid) {
+                $.post("{:url('index/orderlist/pay')}", {oid}, function (res) {
+                    layer.msg('你确定付款吗？', {
+                        time: 0 //不自动关闭
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            layer.close(index);
+                            $(obj).parents('li.td-change').siblings('li.td-status').find('.Mystatus').text(res.msg);
+                            $(obj).text(res.operation);
+                        }
+                    });
+                })
+            }
+
+            function confirm(obj, oid) {
+                $.post("{:url('index/orderlist/confirm')}", {oid}, function (res) {
+                    layer.msg('确定收货？', {
+                        time: 0 //不自动关闭
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            layer.close(index);
+                            $(obj).parents('li.td-change').siblings('li.td-status').find('.Mystatus').text(res.msg);
+                            $(obj).text(res.operation);
+                        }
+                    });
+                })
+            }
+
+            function del(obj, oid) {
+                $.post("{:url('index/orderlist/del')}", {oid}, function (res) {
+                    layer.msg('确定删除订单吗？', {
+                        time: 0 //不自动关闭
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            layer.close(index);
+                            layer.msg(res.msg, {
+                                icon: 6
+                            });
+                            setTimeout(function () {
+                                $(obj).parents('.order-status5').remove();
+                            },3000)
+                        }
+                    });
+                })
+            }
+        </script>
+        <!--底部-->
+        {include file="../template/common/footer.html"}
+    </div>
+    {include file="../template/common/personal.html"}
+</div>
+
+</body>
+
+</html>

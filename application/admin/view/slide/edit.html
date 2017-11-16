@@ -1,0 +1,115 @@
+{extend name="master" /}
+{block name="content"}
+<ul class="nav nav-tabs" role="tablist">
+    <li><a href="/admin/slide">轮播图管理</a></li>
+    <li class="active"><a href="/slide/{$data['slide_id']}/edit">轮播图编辑</a></li>
+</ul>
+<form action="/slide/{$data['slide_id']}" method="POST" onsubmit="post(this,event,'{$data[\'slide_id\']}')" class="form-horizontal" role="form">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">轮播图管理</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">名称</label>
+                <div class="col-sm-10">
+                    <input type="text" name="slide_name" class="form-control" value="{$data.slide_name}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">排序</label>
+                <div class="col-sm-10">
+                    <input type="text" name="slide_sort" class="form-control" value="{$data.slide_sort}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">链接</label>
+                <div class="col-sm-10">
+                    <input type="text" name="slide_url" class="form-control" value="{$data.slide_url}">
+                </div>
+            </div>
+
+            <style>
+                input.layui-upload-file {
+                    display: none;
+                }
+            </style>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">预览图</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input class="form-control" name="preview" readonly="" value="{$data['preview']}">
+                            <div class="input-group-btn">
+                                <button id="test1" class="btn btn-default layui-btn" type="button">选择图片</button>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-top:5px;">
+                            <img src="{$data['preview']}"
+                                 class="img-responsive img-thumbnail" width="150">
+                            <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片"
+                                onclick="removeImg(this)">×</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary">提交</button>
+</form>
+
+
+<script>
+    //上传图片
+    layui.use('upload', function () {
+        var upload = layui.upload;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            , url: '/component/uploader/upload' //上传接口
+            , done: function (res) {
+                //console.log(res.message)
+                $('.img-thumbnail').attr('src', res.message);
+                $('input[name=preview]').val(res.message)
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+    });
+</script>
+<script>
+    function post(obj, e,id) {
+        event.preventDefault();
+        //抓取表单数据
+        var data = $(obj).serialize();
+        //alert(data);
+        $.ajax({
+            url:'/slide/'+id,
+            data:data,
+            type:'PUT',
+            dataType:'json',
+            success:function (res) {
+                if (res.code == 1) {
+                    layer.msg(res.msg, {icon: 1}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, function () {
+                    });
+                }
+            }
+        })
+    }
+</script>
+<script>
+    //移除图片
+    function removeImg(obj) {
+        $(obj).prev('img').attr('src', '/node_modules/hdjs/dist/static/image/nopic.jpg');
+        $(obj).parent().prev().find('input').val('');
+    }
+</script>
+
+{/block}

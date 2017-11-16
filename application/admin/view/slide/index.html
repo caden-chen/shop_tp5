@@ -1,0 +1,69 @@
+{extend name="master" /}
+{block name="content"}
+<ul class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="/slide" role="tab" data-toggle="tab">轮播图列表</a></li>
+    <li><a href="/slide/create" >轮播图添加</a></li>
+</ul>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">轮播图列表</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+        	<thead>
+        		<tr>
+        			<th>编号</th>
+        			<th>名称</th>
+        			<th>排序</th>
+        			<th>预览图</th>
+        			<th>操作</th>
+        		</tr>
+        	</thead>
+        	<tbody>
+			{foreach $data as $v}
+        		<tr>
+        			<td>{$v.slide_id}</td>
+        			<td>{$v.slide_name}</td>
+        			<td>{$v.slide_sort}</td>
+        			<td><img src="{$v.preview}" style="width: 50px" alt=""></td>
+        			<td><div class="btn-group btn-group-s">
+                        <a href="/slide/{$v.slide_id}/edit" class="btn btn-primary">编辑</a>
+                        <a href="javascript:;"  onclick="del('{$v.slide_id}')"  class="btn btn-danger">删除</a>
+                    </div></td>
+        		</tr>
+			{/foreach}
+			</tbody>
+        </table>
+	</div>
+</div>
+<style>
+	.pagination{
+		margin: 0;
+	}
+</style>
+{$data->render()}
+
+<script>
+    function del(id) {
+        layer.msg('确认删除吗？', {
+            time: 0 //不自动关闭
+            ,btn: ['确认', '取消']
+            ,yes: function(index){
+                layer.close(index);
+                $.ajax({
+					url:'/slide/'+id,
+					type:'DELETE',
+					dataType:'json',
+					success:function (res) {
+                        if(res.code==1){
+                                window.location.reload();
+                        }else{
+                            layer.msg(res.msg, function(){});
+                        }
+                    }
+				})
+            }
+        });
+    }
+</script>
+{/block}

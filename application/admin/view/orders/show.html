@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <link href="/admin/static/bootstrap-3.3.0-dist/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link href="/index/static/css/orstyle.css" rel="stylesheet" type="text/css">
+    <script src="/static/layui/layui.all.js"></script>
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">商品信息</li>
+        <li>收货地址</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="order-infomain">
+
+                <div class="order-top">
+                    <div class="th th-item">
+                        <td class="td-inner">商品</td>
+                    </div>
+                    <div class="th th-price">
+                        <td class="td-inner">单价</td>
+                    </div>
+                    <div class="th th-number">
+                        <td class="td-inner">数量</td>
+                    </div>
+                    <div class="th th-amount">
+                        <td class="td-inner">合计</td>
+                    </div>
+                </div>
+
+                <div class="order-main">
+
+                    <div class="order-status3">
+                        <div class="order-title">
+                            <div class="dd-num">订单编号：<a href="javascript:;">{$orderData['oname']}</a></div>
+                            <span>成交时间:{:date('Y-m-d H:m:s',$orderData['time'])}</span>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-left">
+                                {foreach name="$orderData['ogoods']['goods']" item="vo"}
+                                <ul class="item-list">
+                                    <li class="td td-item">
+                                        <div class="item-pic">
+                                            <a href="#" class="J_MakePoint">
+                                                <img src="{$vo['options']['img']}" class="itempic J_ItemImg">
+                                            </a>
+                                        </div>
+                                        <div class="item-info">
+                                            <div class="item-basic-info">
+                                                <a href="#">
+                                                    <p>{$vo['name']}</p>
+                                                    <p class="info-little">规格：{$vo['options']['spec']}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="td td-price">
+                                        <div class="item-price">
+                                            {$vo['price']}
+                                        </div>
+                                    </li>
+                                    <li class="td td-number">
+                                        <div class="item-number">
+                                            <span>×</span>{$vo['num']}
+                                        </div>
+                                    </li>
+                                </ul>
+                                {/foreach}
+                            </div>
+                            <div class="order-right">
+                                <li class="td td-amount">
+                                    <div class="item-amount">
+                                        合计：{$orderData['ogoods']['total_price']}
+                                    </div>
+                                </li>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <table class="table table-hover">
+            	<thead>
+            		<tr>
+            			<th>收货人</th>
+            			<th>联系电话</th>
+            			<th>联系邮箱</th>
+            			<th>收货地址</th>
+            			<th>备注</th>
+            		</tr>
+            	</thead>
+            	<tbody>
+            		<tr>
+            			<td>{$orderData['oaddress']['aname']}</td>
+            			<td>{$orderData['oaddress']['tel']}</td>
+            			<td>{$orderData['oaddress']['email']}</td>
+            			<td>{$orderData['oaddress']['city']}  {$orderData['oaddress']['location']}</td>
+            			<td>{$orderData['ogoods']['proposal']}</td>
+            		</tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

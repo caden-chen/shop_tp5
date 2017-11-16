@@ -1,0 +1,89 @@
+<!--菜单 -->
+<div class=tip>
+    <div id="sidebar">
+        <div id="wrap">
+            <div id="prof" class="item ">
+                <a href="# ">
+                    <span class="setting "></span>
+                </a>
+                {if condition="session('username')"}
+                    <div class="ibar_login_box status_login ">
+                        <div class="avatar_box ">
+                            <p class="avatar_imgbox "><img src="/index/static/images/no-img_mid_.jpg "/></p>
+                            <ul class="user_info ">
+                                <li>{$Think.session.username}</li>
+                                <li>普通会员</li>
+                            </ul>
+                        </div>
+                        <div class="login_btnbox ">
+                            <a href="{:url('index/orderlist/index')}" class="login_order ">我的订单</a>
+                        </div>
+                        <i class="icon_arrow_white "></i>
+                    </div>
+                {else /}
+                    <div class="ibar_login_box status_login ">
+                        <a href="{:url('index/login/index')}" style="color: black;width: 100%;margin: 70px auto">您好,请先<i style="color: #ac2925">登录</i></a>
+                    </div>
+                {/if}
+            </div>
+            <div id="shopCart " class="item shopmenu">
+                <a href="{:url('index/cart/index')}">
+                    <span class="message "></span>
+                </a>
+                <p>
+                    购物车
+                </p>
+                {if condition="session('cart')"}
+                <p class="cart_num">{$Think.session.cart['total_rows']}</p>
+                {else /}
+                <p class="cart_num ">0</p>
+                {/if}
+            </div>
+            <script>
+                $('.shopmenu').click(function () {
+                    //alert();
+                    location.href = "{:url('index/cart/index')}"
+                })
+            </script>
+
+            <div class="quick_toggle ">
+                <!--二维码 -->
+                <li class="qtitem ">
+                    <a href="#none "><span class="mpbtn_qrcode "></span></a>
+                    <div class="mp_qrcode " style="display:none; "><img
+                            src="/index/static/images/weixin_code_145.png "/><i class="icon_arrow_white "></i></div>
+                </li>
+                <li class="qtitem ">
+                    <a href="#top " class="return_top "><span class="top "></span></a>
+                </li>
+            </div>
+
+            <!--回到顶部 -->
+            <div id="quick_links_pop " class="quick_links_pop hide "></div>
+
+        </div>
+
+    </div>
+    <div id="prof-content " class="nav-content ">
+        <div class="nav-con-close ">
+            <i class="am-icon-angle-right am-icon-fw "></i>
+        </div>
+        <div>
+            我
+        </div>
+    </div>
+    <div id="shopCart-content " class="nav-content ">
+        <div class="nav-con-close ">
+            <i class="am-icon-angle-right am-icon-fw "></i>
+        </div>
+        <div>
+            购物车
+        </div>
+    </div>
+    <div id="asset-content " class="nav-content ">
+        <div class="nav-con-close ">
+            <i class="am-icon-angle-right am-icon-fw "></i>
+        </div>
+    </div>
+
+</div>

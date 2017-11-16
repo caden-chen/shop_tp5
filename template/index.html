@@ -1,0 +1,240 @@
+<!DOCTYPE html >
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>首页</title>
+
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css"/>
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css"/>
+
+    <link href="/index/static/basic/css/demo.css" rel="stylesheet" type="text/css"/>
+
+    <link href="/index/static/css/hmstyle.css" rel="stylesheet" type="text/css"/>
+    <link href="/index/static/css/skin.css" rel="stylesheet" type="text/css"/>
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/jquery.min.js"></script>
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/amazeui.min.js"></script>
+
+</head>
+
+<body>
+{include file="../template/common/header.html"}
+<div class="banner">
+    <!--轮播 -->
+    <div class="am-slider am-slider-default scoll" data-am-flexslider id="demo-slider-0">
+        <ul class="am-slides">
+            {foreach name="SlideData" item="vo" key="k"}
+            <li><a href="javascript:;"><img style="margin-left: -664px;height: 430px;width: 100%" src="{$vo['preview']}"/></a></li>
+            {/foreach}
+
+        </ul>
+    </div>
+    <!--轮播-->
+
+    <script type="text/javascript">
+        (function () {
+            $('.am-slider').flexslider();
+        });
+        $(document).ready(function () {
+            $("li").hover(function () {
+                $(".category-content .category-list li.first .menu-in").css("display", "none");
+                $(".category-content .category-list li.first").removeClass("hover");
+                $(this).addClass("hover");
+                $(this).children("div.menu-in").css("display", "block")
+            }, function () {
+                $(this).removeClass("hover")
+                $(this).children("div.menu-in").css("display", "none")
+            });
+        })
+    </script>
+
+    <div class="clear"></div>
+</div>
+<div class="shopNav">
+    <div class="slideall">
+
+        <div class="long-title"><span class="all-goods">全部分类</span></div>
+        <div class="nav-cont">
+            <ul>
+                <li class="index"><a href="{:url('index/index/index')}">首页</a></li>
+            </ul>
+
+        </div>
+
+        <!--侧边导航 -->
+        <div id="nav" class="navfull">
+            <div class="area clearfix">
+                <div class="category-content" id="guide_2">
+
+                    <div class="category">
+                        <ul class="category-list" id="js_climit_li">
+                            {foreach $TagData as $vo}
+                            <li class="appliance js_toggle relative">
+
+                                <div class="category-info">
+                                    <h3 class="category-name b-category-name">
+                                        <i><img src="{$vo['tag_img']}" alt=""></i>
+                                        <a class="ml-22" href="{:url('index/lists/index',['tid'=>$vo['tag_id']])}"
+                                           title="{$vo['tag_name']}">{$vo['tag_name']}</a>
+                                    </h3>
+                                    <em>&gt;</em></div>
+                                <div class="menu-item menu-in top">
+                                    <div class="area-in">
+                                        <div class="area-bg">
+                                            <div class="menu-srot">
+                                                <div class="sort-side">
+                                                    {foreach $vo['_data'] as $v}
+                                                    <dl class="dl-sort">
+                                                        <dt><span title="{$v['tag_name']}">{$v['tag_name']}</span></dt>
+                                                        {foreach $v['_data'] as $vv}
+                                                        <dd><a title="{$vv['tag_name']}"
+                                                               href="{:url('index/lists/index',['tid'=>$vv['tag_id']])}"><span>{$vv['tag_name']}</span></a>
+                                                        </dd>
+                                                        {/foreach}
+                                                    </dl>
+                                                    {/foreach}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <b class="arrow"></b>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="shopMainbg">
+        <div class="shopMain" id="shopmain">
+
+            <!--今日推荐 -->
+
+            <div class="am-g am-g-fixed recommendation">
+                <div class="clock am-u-sm-3">
+                    <img src="/index/static/images/2016.png ">
+                    <p>今日<br>推荐</p>
+                </div>
+                {foreach name="recomData" item="vo"}
+                <div class="am-u-sm-4 am-u-lg-3 ">
+                    <div class="info ">
+                        <h3>{$vo['goods_name']}</h3>
+                        <h4>{$vo['goods_desc']}</h4>
+                    </div>
+                    <div class="recommendationMain one">
+                        <a href="{:url('index/goods/index',['gid'=>$vo['goods_id']])}"><img src="{$vo['list_img']} "></a>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            <div class="clear "></div>
+            <!--热门活动 -->
+
+            <div class="am-container activity ">
+                <div class="shopTitle ">
+                    <h4>热门商品</h4>
+                    <h3></h3>
+                    <span class="more ">
+                              <a href="# ">全部热门<i class="am-icon-angle-right" style="padding-left:10px ;"></i></a>
+                        </span>
+                </div>
+                <div class="am-g am-g-fixed ">
+                    {foreach name="hotData" item="vo"}
+
+                    <div class="am-u-sm-3 ">
+                        <div class="activityMain ">
+                            <a href="{:url('index/goods/index',['gid'=>$vo['goods_id']])}">
+                                <img src="{$vo['list_img']} ">
+                            </a>
+
+                        </div>
+                        <div class="info ">
+                            <h3>
+                                <a href="{:url('index/goods/index',['gid'=>$vo['goods_id']])}">
+                                {$vo['goods_name']}
+                                </a>
+                            </h3>
+                        </div>
+                    </div>
+                    {/foreach}
+
+                </div>
+            </div>
+            <div class="clear "></div>
+            {foreach name="cateData" item="vo" key="k"}
+            <div id="f{$k+1}">
+                <!--甜点-->
+                <div class="am-container ">
+                    <div class="shopTitle ">
+                        <h4>{$vo['tag_name']}</h4>
+                        <h3>{$vo['tag_desc']}</h3>
+                        <div class="today-brands">
+                            {foreach name="vo['son']" item="v"}
+                            <a href="{:url('index/lists/index',['tid'=>$v['tag_id']])}">{$v['tag_name']}</a>
+                            {/foreach}
+                        </div>
+                        <span class="more ">
+                    <a href="# ">更多美味<i class="am-icon-angle-right" style="padding-left:10px ;" ></i></a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="am-g am-g-fixed floodFour">
+                    <div class="am-u-sm-5 am-u-md-4 text-one list ">
+                        <div class="word" style="overflow: hidden;height: 150px">
+                            {foreach name="vo['son']" item="v"}
+                            <a class="outer" href="{:url('index/lists/index',['tid'=>$v['tag_id']])}"><span class="inner"><b class="text">{$v['tag_name']}</b></span></a>
+                            {/foreach}
+                        </div>
+                        {volist name="vo['goods']" id="v"  length='1'}
+                        <a href="# ">
+                            <div class="outer-con ">
+                                <div class="title ">
+                                    {$v['goods_name']}
+                                </div>
+                                <div class="sub-title ">
+                                    {$v['goods_desc']}
+                                </div>
+                            </div>
+                            <img style="height: 180px;border-radius:50%;margin-bottom: 20px" src="{$v['list_img']} " />
+                        </a>
+                        {/volist}
+                        <div class="triangle-topright"></div>
+                    </div>
+                    {foreach name="$vo['goods']" item="vv"}
+                    <div class="am-u-sm-7 am-u-md-4 text-two louceng">
+                        <div class="outer-con ">
+                            <div class="title ">
+                                {$vv['goods_name']}
+                            </div>
+                            <div class="sub-title ">
+                                ¥{$vv['price']}
+                            </div>
+                            <a href="{:url('index/goods/index',['gid'=>$vv['goods_id']])}"><i class="am-icon-shopping-basket am-icon-md  seprate"></i></a>
+                        </div>
+                        <a href="{:url('index/goods/index',['gid'=>$vv['goods_id']])} "><img style="height: 160px" src="{$vv['list_img']}" /></a>
+                    </div>
+                    {/foreach}
+                </div>
+                <div class="clear "></div>
+            </div>
+            {/foreach}
+            {include file="../template/common/footer.html"}
+
+        </div>
+    </div>
+
+    {include file="../template/common/menu.html"}
+    <script>
+        window.jQuery || document.write('<script src="/index/static/basic/js/jquery.min.js "><\/script>');
+    </script>
+    <script type="text/javascript " src="/index/static/basic/js/quick_links.js "></script>
+</body>
+
+</html>

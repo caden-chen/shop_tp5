@@ -1,0 +1,240 @@
+{extend name="master" /}
+{block name="content"}
+
+<ul class="nav nav-tabs" role="tablist">
+    <li><a href="/admin/goods">商品管理</a></li>
+    <li class="active"><a href="/admin/goods/create">商品添加</a></li>
+</ul>
+<form action="" method="POST" class="form-horizontal" onsubmit="post(this,event)" role="form">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">商品管理</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">名称</label>
+                <div class="col-sm-10">
+                    <input type="text" name="goods_name" class="form-control" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">描述</label>
+                <div class="col-sm-10">
+                    <input type="text" name="goods_desc" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">价格</label>
+                <div class="col-sm-10">
+                    <input type="text" name="price" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">点击次数</label>
+                <div class="col-sm-10">
+                    <input type="text" name="click" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">所属栏目</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="tid">
+                        <option value="0">--请选择--</option>
+                        {foreach name='tagData' item='v'}
+                        <option value="{$v.tag_id}">{$v._tag_name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">是否热门</label>
+                <div class="col-sm-10">
+                    <input type="radio" name="is_hot" value="1">是
+                    <input type="radio" name="is_hot" value="2" checked>否
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">是否推荐</label>
+                <div class="col-sm-10">
+                    <input type="radio" name="is_recommend" value="1">是
+                    <input type="radio" name="is_recommend" value="2" checked>否
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">列表封面图</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input class="form-control" name="list_img" readonly="" value="">
+                            <div class="input-group-btn">
+                                <button id="test1" class="btn btn-default layui-btn" type="button">选择图片</button>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-top:5px;">
+                            <img src="/admin/nopic.jpg"
+                                 class="img-responsive img-thumbnail" width="150">
+                            <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片"
+                                onclick="removeImg(this)">×</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">商品图册</label>
+                <div class="col-sm-10">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn" id="test2">多图片上传</button>
+                        <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                            预览图：
+                            <div class="layui-upload-list" id="demo2">
+
+                            </div>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">商品详情</label>
+                <div class="col-sm-10">
+                    <textarea id="demo" name="details" style="display: none;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/vue/vue.js"></script>
+    <div class="panel panel-default" id="app">
+        <div class="panel-heading">
+            <h3 class="panel-title">规格参数</h3>
+        </div>
+        <div class="panel-body">
+            <div class="panel panel-default" v-for="(v,k) in spec">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label">组合</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="v.combine">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label">库存</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="v.total">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-danger btn-xs" @click.prevent="del(k)">删除</button>
+                </div>
+            </div>
+            <button class="btn btn-success btn-xs" @click.prevent="add()">添加一项</button>
+        </div>
+        <textarea name="spec" hidden>{{spec}}</textarea>
+    </div>
+    <button class="btn btn-primary sync">提交</button>
+</form>
+<script>
+    layui.use('layedit', function(){
+
+        var layedit = layui.layedit;
+        var index = layedit.build('demo', {
+            uploadImage: {
+                url: '/component/Idter/upload' //接口url
+            },
+        })
+        $('.sync').click(function(){
+            layedit.sync(index);
+        })
+    });
+</script>
+
+<script>
+    //上传图片
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '/component/uploader/upload' //上传接口
+            ,done: function(res){
+                $('.img-thumbnail').attr('src',res.message);
+                $('input[name=list_img]').val(res.message)
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+        //多图片上传
+        upload.render({
+            elem: '#test2'
+            ,url: '/component/uploader/upload'
+            ,multiple: true
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                });
+            }
+            ,done: function(res){
+                //console.log(res.message)
+                $('#demo2').append('<div id="morepic" style="margin-left:10px;display: inline-block"><input type="hidden" name="pics[]" value="'+res.message+'"><img style="width: 100px" onclick="removePic(this)" src="'+ res.message +'"  class="layui-upload-img" ></div>')
+            }
+        });
+    });
+</script>
+
+<script>
+    function post(obj,e) {
+        e.preventDefault();
+        //抓取表单数据
+        var data=$(obj).serialize();
+        //post方式发送异步：请求地址、发送数据、成功回调、返回的数据类型
+        $.post("/goods",data,function (res) {
+            if(res.code==1){
+                layer.msg(res.msg, {icon: 1},function () {
+                    location.href = res.url;
+                });
+            }else{
+                layer.msg(res.msg, function(){});
+            }
+        },'json')
+    }
+</script>
+
+<script>
+    //移除多图上传
+    function removePic(obj) {
+        $(obj).parent('#morepic').remove();
+    }
+    //移除图片
+    function removeImg(obj) {
+        $(obj).prev('img').attr('src', '/admin/nopic.jpg');
+        $(obj).parent().prev().find('input').val('');
+    }
+</script>
+
+<script>
+        new Vue({
+            el:'#app',
+            data:{
+                spec:[
+                    {combine:'',total:0},
+                ],
+            },
+            methods:{
+                add(){
+                    var field = {combine:'',total:0};
+                    this.spec.push(field);
+                },
+                del(k){
+                    this.spec.splice(k,1);
+                }
+            }
+        });
+</script>
+
+{/block}

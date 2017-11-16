@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+
+    <title>地址管理</title>
+
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="/index/static/AmazeUI-2.4.2/assets/css/amazeui.css" rel="stylesheet" type="text/css">
+    <link href="/static/city/city-picker.css" rel="stylesheet" type="text/css">
+    <link href="/index/static/css/personal.css" rel="stylesheet" type="text/css">
+    <link href="/index/static/css/addstyle.css" rel="stylesheet" type="text/css">
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/jquery.min.js" type="text/javascript"></script>
+    <script src="/index/static/AmazeUI-2.4.2/assets/js/amazeui.js"></script>
+    <script src="/static/city/city-picker.data.js"></script>
+    <script src="/static/city/city-picker.js"></script>
+    <script src="/static/city/main.js"></script>
+</head>
+
+<body>
+<!--头 -->
+<header>
+    <article>
+        {include file="../template/common/header.html"}
+    </article>
+</header>
+
+<div class="nav-table">
+    <div class="long-title"><span class="all-goods">全部分类</span></div>
+    <div class="nav-cont">
+        <ul>
+            <li class="index"><a href="#">首页</a></li>
+        </ul>
+    </div>
+</div>
+<b class="line"></b>
+
+<div class="center">
+    <div class="col-main">
+        <div class="main-wrap">
+
+            <div class="user-address">
+                <!--标题 -->
+                <div class="am-cf am-padding">
+                    <div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">地址管理</strong> /
+                        <small>Address&nbsp;list</small>
+                    </div>
+                </div>
+                <hr/>
+                <ul class="am-avg-sm-1 am-avg-md-3 am-thumbnails">
+                    {foreach name="AddressData" item="vo" key="k"}
+                    <li class="user-addresslist ">
+                        <span class="new-option-r"><i class="am-icon-check-circle"></i>默认地址</span>
+                        <p class="new-tit new-p-re">
+                            <span class="new-txt">{$vo['aname']}</span>
+                            <span class="new-txt-rd2">{$vo['tel']}</span>
+                        </p>
+                        <div class="new-mu_l2a new-p-re">
+                            <p class="new-mu_l2cw">
+                                <span class="title">地址：</span>
+                                <span class="province">{$vo['city']}</span>
+                                <span class="street">{$vo['location']}</span></p>
+                        </div>
+                        <div class="new-addr-btn">
+                            <a href="javascript:void(0);" aid="{$vo['address_id']}" class="edit"><i class="am-icon-edit "></i>编辑</a>
+                            <span class="new-addr-bar">|</span>
+                            <a href="javascript:void(0);" onclick="del(this,{$vo['address_id']})"><i class="am-icon-trash"></i>删除</a>
+                        </div>
+                    </li>
+                    {/foreach}
+                </ul>
+
+                <div class="clear"></div>
+                <script>
+                    $('.edit').click(function () {
+                        var aid=$(this).attr('aid');
+                        $('.save').attr('aid',aid);
+                        $('.add_title strong').text('修改地址');
+                        $('.add_title small').text('Edit address');
+                        $.post("{:url('index/address/edit')}",{aid},function (res) {
+                            $('.city-picker-span').addClass('hidden');
+                            $('input[name=aname]').val(res.aname);
+                            $('input[name=tel]').val(res.tel);
+                            $('.city').removeClass('hidden').text(res.city);
+                            $('textarea[name=location]').val(res.location);
+                        },'json')
+
+                    })
+                    $('.user-addresslist').first().addClass('defaultAddr');
+                </script>
+                <script>
+                    function del(obj,aid) {
+                            layer.msg('你确定你要删除么？', {
+                                time: 0 //不自动关闭
+                                ,btn: ['确定', '取消']
+                                ,yes: function(index){
+                                    $.post("{:url('index/address/del')}",{aid},function (res) {
+                                        if(res.code==1){
+                                            layer.close(index);
+                                            layer.msg(res.msg, {icon: 6});
+                                            setTimeout(function () {
+                                                $(obj).parents('.user-addresslist').remove();
+                                            },2000)
+                                        }else {
+                                            layer.close(index);
+                                            layer.msg(res.msg, {icon: 5});
+                                        }
+
+                                });
+                            }
+                        })
+
+                    }
+                </script>
+
+                <a class="new-abtn-type" data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0}">添加新地址</a>
+                <!--例子-->
+                <div class="am-modal am-modal-no-btn" id="doc-modal-1">
+
+                    <div class="add-dress">
+
+                        <!--标题 -->
+                        <div class="am-cf am-padding">
+                            <div class="am-fl am-cf add_title"><strong class="am-text-danger  am-text-lg">新增地址</strong> /
+                                <small>Add&nbsp;address</small>
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <div class="am-u-md-12 am-u-lg-8" style="margin-top: 20px;">
+                            <form class="am-form am-form-horizontal" action="" onsubmit="post(this,event)"
+                                  method="post" style="padding-bottom: 150px;">
+
+                                <div class="am-form-group">
+                                    <label for="user-name" class="am-form-label">收货人</label>
+                                    <div class="am-form-content">
+                                        <input type="text" name="aname"  placeholder="收货人">
+                                    </div>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="user-phone" class="am-form-label" >手机号码</label>
+                                    <div class="am-form-content">
+                                        <input  placeholder="手机号必填" name="tel" type="tel">
+                                    </div>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="user-address" class="am-form-label">所在地</label>
+                                    <div class="am-form-content address">
+                                        <div class="form-group">
+                                            <div style="position: relative;">
+                                                <p class="city hidden" style="color: gray;cursor: pointer;text-decoration: underline"></p>
+                                                <input id="city-picker3" class="form-control" readonly type="text" name="city" value="" data-toggle="city-picker">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    $('.address').click(function () {
+                                        $('.city-picker-span').removeClass('hidden')
+                                        $('p.city').addClass('hidden')
+                                    })
+                                </script>
+                                <style>
+                                    .hidden{
+                                        display: none;
+                                    }
+                                </style>
+                                <div class="am-form-group">
+                                    <label for="user-intro" class="am-form-label">详细地址</label>
+                                    <div class="am-form-content">
+                                        <textarea class="" rows="10"  name="location"
+                                                  placeholder="输入详细地址"></textarea>
+                                        <small>100字以内写出你的详细地址...</small>
+                                    </div>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <div class="am-u-sm-9 am-u-sm-push-3">
+                                        <button class="am-btn save am-btn-danger" aid="">保存</button>
+                                        <a href="javascript: void(0)" class="am-close am-btn am-btn-danger"
+                                           data-am-modal-close>取消</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <script>
+                            function post(obj, e) {
+                                e.preventDefault();
+                                //抓取表单数据
+                                var aname = $('input[name=aname]').val();
+                                var tel = $('input[name=tel]').val();
+                                var location = $('textarea[name=location]').val();
+                                var city=$('input[name=city]').val();
+                                if (city==''){
+                                    city=$('p.city').text();
+                                }
+                                var aid=$('.save').attr('aid');
+                                $.post("{:url('index/address/add')}", {aid,aname, tel, location,city}, function (res) {
+                                    if (res['code'] = 1) {
+                                        layer.msg(res.msg, {icon: 1, time: 2000}, function () {
+                                            history.go(0);
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, function () {
+
+                                        });
+                                    }
+                                }, 'json')
+
+                            }
+                        </script>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(".new-option-r").click(function () {
+                        $(this).parent('.user-addresslist').addClass("defaultAddr").siblings().removeClass("defaultAddr");
+                    });
+
+                    var $ww = $(window).width();
+                    if ($ww > 640) {
+                        $("#doc-modal-1").removeClass("am-modal am-modal-no-btn")
+                    }
+
+                })
+            </script>
+
+            <div class="clear"></div>
+
+        </div>
+        <!--底部-->
+        {include file="../template/common/footer.html"}
+    </div>
+
+    {include file="../template/common/personal.html"}
+</div>
+</body>
+
+</html>

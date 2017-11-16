@@ -1,0 +1,74 @@
+
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+<script src="/static/layui/layui.all.js"></script>
+<div class="hmtop">
+    <!--顶部导航条 -->
+    <div class="am-container header">
+        <ul class="message-l">
+            <div class="topMessage">
+                <style>
+                    a.out{
+                        color: red;
+                    }
+                </style>
+                {if condition="session('username')"}
+                <div class="menu-hd">
+                    <a href="javascript:;" target="_top" class="h">亲，欢迎你</a>
+                    <a href="{:url('index/personal/index')}" target="_top">{$Think.session.username}</a>
+                    <a href="javascript:;" target="_top" class="out">退出</a>
+                </div>
+                {else /}
+                <div class="menu-hd">
+                    <a href="{:url('index/login/index')}" target="_top" class="h">亲，请登录</a>
+                    <a href="{:url('index/register/index')}" target="_top">免费注册</a>
+                </div>
+                {/if}
+            </div>
+            <script>
+                $('a.out').click(function () {
+                    $.post("{:url('index/index/out')}",function (res) {
+                        if (res.code==1){
+                            layer.msg(res.msg, {icon: 1});
+                            history.go(0)
+                        }
+                    })
+                })
+            </script>
+        </ul>
+        <ul class="message-r">
+            <div class="topMessage home">
+                <div class="menu-hd"><a href="{:url('index/index/index')}" target="_top" class="h">商城首页</a></div>
+            </div>
+            <div class="topMessage my-shangcheng">
+                <div class="menu-hd MyShangcheng"><a href="{:url('index/personal/index')}" target="_top"><i class="am-icon-user am-icon-fw"></i>个人中心</a>
+                </div>
+            </div>
+            <div class="topMessage mini-cart">
+                <div class="menu-hd"><a id="mc-menu-hd" href="#" target="_top"><i
+                        class="am-icon-shopping-cart  am-icon-fw"></i><span>购物车</span><strong id="J_MiniCartNum" class="h">{$Think.session.cart['total_rows']}</strong></a>
+                </div>
+            </div>
+            <script>
+                $('.mini-cart .menu-hd').click(function () {
+                    location.href = "{:url('index/cart/index')}"
+                })
+            </script>
+        </ul>
+    </div>
+
+    <!--悬浮搜索框-->
+
+    <div class="nav white">
+        <div class="logoBig">
+            <li><img src="/index/static/images/logobig.png"/></li>
+        </div>
+        <div class="search-bar pr">
+            <a name="index_none_header_sysc" href="javascript:;"></a>
+            <form method="post" action="{:url('index/search/index')}">
+                <input id="searchInput" name="index_none_header_sysc" type="text" placeholder="搜索" autocomplete="off">
+                <input id="ai-topsearch" class="submit am-btn" value="搜索" index="1" type="submit">
+            </form>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
